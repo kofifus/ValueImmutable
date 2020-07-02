@@ -3,7 +3,10 @@ C# support for immutable objects with value semantics
 
 ## Introduction
 
-A desirable 'functional' programming paradign (as opposed to OOP) is one in which logic is clearly separated from data and state. In such a paradigm, logic is stateless ('pure') functionality, data is represented by stateless objects that are immutable and have value semantics, and state is a collection of data with clearly defined access and mutation mechanisms.
+A desirable 'functional' programming paradign (as opposed to OOP) is one in which there is clear separation between logic, data, and state:
+- logic is stateless ('pure') functionality
+- data is represented by stateless (immutable) objects that have value semantics (that is equality and hashcode consider all members)
+- state is a collection of data with clearly defined access and mutation mechanisms
 
 C# started as OOP language where logic data and state are strongly coupled in classes. This makes coding in such a paradigm unnatural:
 - Stateless logic can be cleanly expressed by static classes and static functions
