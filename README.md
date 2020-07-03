@@ -19,13 +19,11 @@ The purpose of the ValueImmutable (or 'V') package is to greatly simplify the cr
 
 An object that once constructed:
 
-- all public fields always return the same values
-- all public getters always return the same values
+- all public fields and public properties always return the same values
 - GetHashCode() always return the same value
-- Equals(o2) will return true iff:
-   - this and o2 are of the exact same type (equal GetType() result for both)
-   - all public fields of this and o2 return equal values
-   - all public getters of this and o2 return equal values
+- Equals(obj) will return true iff:
+   - this and obj are of the exact same type (equal GetType() result for both)
+   - all public fields and public properties of this and obj return equal values respectively
 - operators == and != return the same result as Equals and !Equals respectively
 
 
