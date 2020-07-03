@@ -15,9 +15,7 @@ C# started as OOP language where logic data and state are strongly coupled in cl
 
 The purpose of the ValueImmutable (or 'V') package is to greatly simplify the creation of data (immutable objects with value semantics), and to provide a mechanism for creating, accessing and mutating states.
 
-## Definitions
-
-### ValueImmutable Object
+## Definitions - ValueImmutable Object
 
 An object that once constructed:
 
@@ -25,11 +23,10 @@ An object that once constructed:
 - all public getters always return the same values
 - GetHashCode() always return the same value
 - Equals(o2) will return true iff:
-   - this and o2 are of the exact same type (equal GetType() )
-   - all public fields of this and o2 always return equal values
-   - all public getters of this and o2 always return equal values
-- operator==(o1, o2) always returns object.Equals(o1, o2)
-- operator!=(o1, o2) always returns !object.Equals(o1, o2)
+   - this and o2 are of the exact same type (equal GetType() result for both)
+   - all public fields of this and o2 return equal values
+   - all public getters of this and o2 return equal values
+- operators == and != return the same result as Equals and !Equals respectively
 
 
 
