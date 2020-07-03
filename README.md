@@ -26,6 +26,22 @@ An object that once constructed:
    - all public fields and public properties of this and obj return equal values respectively
 - operators == and != return the same result as Equals and !Equals respectively
 
+## Components
 
+### VRecord 
+
+Allow easy creation of immutable data types with value semantics
+
+### VWrapper
+
+Allow easy 'wrapping' (composing) an existing type to create a new ValueImmutable type
+
+### V containers
+
+Value immutable versions of commonn containers (Array, List, HashSet, Dictionary etc) with enhanced API
+
+### VState
+
+Encapsulates a ValueImmutable object so that the _only_ way to modify it is through 
 
 
