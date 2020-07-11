@@ -65,7 +65,7 @@ State:
 VLockedState<VDict<string, Employee>> Employees =  VLockedState.Create(new VDict<string, Employee>());
 ```
 
-Logic:
+Logic1:
 ```
 bool AddEmployeePhone(string name, string phone) {
   return Employees.Ref((ref VDict<string, Employee> employees) => {
@@ -88,3 +88,10 @@ bool AddEmployeePhone(string name, string phone) {
   });
 }
 ```
+
+Logic2:
+```
+IEnumerable<string> GetAllEmployeeNames() => Employees.Val.Keys;
+```
+
+
