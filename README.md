@@ -49,3 +49,42 @@ Allow the easy creation of a new (ValueImmutable) type which encapsulates anothe
 Allow the easy creation of a new (ValueImmutable) type which encapsulates another type which is not ValueImmutable itself.  
 
 
+## A Simple Example
+
+Data:
+```
+class Employee : VRecord<Employee> {
+  string Name;
+  VSet<string> Phones;
+  public Employee(string name, VSet<string> phones) => (this.Name, this.Phones) = (name, phones);
+}
+```
+
+State:
+```
+VLockedState<VDict<string, Employee>> Employees =  VLockedState.Create(new VDict<string, Employee>());
+```
+
+Logic:
+```
+bool AddEmployeePhone(string name, string phone) {
+  return Employees.Ref((ref VDict<string, Employee> employees) => {
+    var (ok, employee) = employees[name];
+    if (!ok) return false;
+    var newPhones = employee.Phones + phone;
+    var newEmployee = employee.With(x => x.Phones, newPhones);
+    employees = employees + (name, newEmployee);
+    return true;
+  });
+}
+```
+
+The above can also be shortened to:
+```
+bool AddEmployeePhone(string name, string phone) {
+  return Employees.Ref((ref VDict<string, Employee> employees) => {
+   var (ok, employees) = employees.With(name, x => x.Phones, phones => phones+phone);
+   return ok;
+  });
+}
+```
