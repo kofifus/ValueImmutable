@@ -5,7 +5,7 @@ C# support for immutable objects with value semantics
 
 A desirable 'functional' programming paradign (as opposed to OOP) is one in which there is clear separation between Data, State and Logic:
 - Data represents 'information'. Data is either an instance of a basic type or a collection/composition of other Data. All Data is immutable (cannot change once created) and has value semantics (for equality etc). Data may contain methods to return different representations of itself (ie the decimal or fration part of a real number), however it's methods cannot change itself or interact with States or Logic.
-- State represents 'memory', it made of data with clearly defined mechanisms to access and mutate it, however it does not mutate other States or initiate other Logics. 
+- State represents 'memory'. It is made of Data with clearly defined mechanisms to access and mutate it. It does not mutate other States or initiate other Logics. 
 - Logic represents 'operation'. Is is stateless ('pure') functionality that links input (from UI etc), Data and State(s) and is the only entity that can mutates the state(s).
 
 C# started as an OOP language where data state and logic are strongly coupled in classes. This makes coding in such a 'functional' paradigm challenging:
