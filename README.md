@@ -51,7 +51,7 @@ Allow the easy creation of a new (ValueImmutable) type which encapsulates anothe
 
 ## A Simple Example
 
-Data:
+###Data:
 ```
 class Employee : VRecord<Employee> {
   string Name { get; }
@@ -60,21 +60,26 @@ class Employee : VRecord<Employee> {
 }
 ```
 `VSet` is an immutable hashset with value semantics and other additions. So all of `Employee`'s fields are immutable with ValueSemantics. 
-By deriving from `VRecord`, `Employee` get two features: 
-First, value semantics itself that is an `Equals` and `GetHashCode` that compare all it's fields. 
+By deriving from `VRecord`, `Employee` get two features:<br> 
+First, value semantics itself that is an `Equals` and `GetHashCode` that compare all it's fields.<br>
 Second, a `With` method that allows easy creation of mutations (ie `emp2 = emp1.With(x => x.Name, "newname");`)
 
 
-State:
+###State:
 ```
-VLockedState<VDict<string, Employee>> Employees =  VLockedState.Create(new VDict<string, Employee>());
+public static class Store {
+   public static VLockedState<VDict<string, Employee>> EmployeesStore =  VLockedState.Create(new VDict<string, Employee>());
+}
 ```
+Store holds the State of the program in this case. `EmployeesStore` is a mutable state that locks itself before allowing mutation so that the _only_ way to change it is threadsafe. It has three methods: `Ref` locks and mutate, `In` locks and allows readonly access, and 'Val' allows threadsafe readonly access of a possibly stale value. <br>
+Using `Ref` and `In` hides locking and eliminate multithreading issues when a lock was forgotten. Using 'Val' whereever stale values can be tolerated prevents unecessary locking while preserving thready safety.
 
-Logic1:
+
+###Logic1:
 ```
 bool AddEmployeePhone(string name, string phone) {
-  return Employees.Ref((ref VDict<string, Employee> employees) => {
-   var (ok, employees) = employees.With(name, x => x.Phones, phones => phones+phone);
+  return Employees.Ref((ref VDict<string, Employee> employeesStore) => {
+   var (ok, employeesStore) = employeesStore.With(name, x => x.Phones, phones => phones+phone);
    return ok;
   });
 }
