@@ -54,8 +54,8 @@ Allow the easy creation of a new (ValueImmutable) type which encapsulates anothe
 Data:
 ```
 class Employee : VRecord<Employee> {
-  string Name;
-  VSet<string> Phones;
+  string Name { get; }
+  VSet<string> Phones  { get; }
   public Employee(string name, VSet<string> phones) => (this.Name, this.Phones) = (name, phones);
 }
 ```
