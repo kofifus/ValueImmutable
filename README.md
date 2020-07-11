@@ -59,10 +59,10 @@ class Employee : VRecord<Employee> {
   public Employee(string name, VSet<string> phones) => (this.Name, this.Phones) = (name, phones);
 }
 ```
-`VSet` is an immutable hashset with value semantics and other additions.
+`VSet` is an immutable hashset with value semantics and other additions. So all of `Employee`'s fields are immutable with ValueSemantics. 
 By deriving from `VRecord`, `Employee` get two features: 
-First, value semantics - that is an `Equals` and `GetHashCode` that compare all it's fields ie `Name` and `Phones` (which has value semantics itself)). 
-Second, a `With` method that allows easy creation of mutations of Employee (ie `emp2 = emp1.With(x => x.Name, "newname");`)
+First, value semantics itself that is an `Equals` and `GetHashCode` that compare all it's fields. 
+Second, a `With` method that allows easy creation of mutations (ie `emp2 = emp1.With(x => x.Name, "newname");`)
 
 
 State:
