@@ -28,30 +28,30 @@ An object that once constructed:
 
 ## Components
 
-### VRecord 
+**VRecord** 
 
 Allow easy creation of immutable data types with value semantics
 
-### V containers
+**V containers**
 
 Value immutable versions of commonn containers (Array, List, HashSet, Dictionary etc) with enhanced API
 
-### VState
+**VState**
 
 Encapsulate a ValueImmutable object so that the _only_ way to modify it is through clearly defined access/mutation mechanism. Two concrete implementations of VState are provided - VLockedState and VJournaledLockedState.
 
-### VWrapper
+**VWrapper**
 
 Allow the easy creation of a new (ValueImmutable) type which encapsulates another (ValueImmutable) type 
 
-### VComposer
+**VComposer**
 
 Allow the easy creation of a new (ValueImmutable) type which encapsulates another type which is not ValueImmutable itself.  
 
 
 ## A Simple Example
 
-###Data:
+**Data:**
 ```
 class Employee : VRecord<Employee> {
   string Name { get; }
@@ -65,7 +65,7 @@ First, value semantics itself that is an `Equals` and `GetHashCode` that compare
 Second, a `With` method that allows easy creation of mutations (ie `emp2 = emp1.With(x => x.Name, "newname");`)
 
 
-###State:
+**State:**
 ```
 public static class Store {
    public static VLockedState<VDict<string, Employee>> EmployeesStore =  VLockedState.Create(new VDict<string, Employee>());
@@ -75,19 +75,18 @@ Store holds the State of the program in this case. `EmployeesStore` is a mutable
 Using `Ref` and `In` hides locking and eliminate multithreading issues when a lock was forgotten. Using 'Val' whereever stale values can be tolerated prevents unecessary locking while preserving thready safety.
 
 
-###Logic1:
+**Logic:**
 ```
-bool AddEmployeePhone(string name, string phone) {
-  return Employees.Ref((ref VDict<string, Employee> employeesStore) => {
-   var (ok, employeesStore) = employeesStore.With(name, x => x.Phones, phones => phones+phone);
-   return ok;
-  });
-}
-```
+public static class EmployeeLogic {
+  public static bool AddEmployeePhone(string name, string phone) {
+    return Employees.Ref((ref VDict<string, Employee> employeesStore) => {
+     var (ok, employeesStore) = employeesStore.With(name, x => x.Phones, phones => phones+phone);
+     return ok;
+    });
+  }
 
-Logic2:
-```
-IEnumerable<string> GetAllEmployeeNames() => Employees.Val.Keys;
+  public static IEnumerable<string> GetAllEmployeeNames() => Employees.Val.Keys;
+}  
 ```
 
 
