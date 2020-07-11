@@ -68,10 +68,12 @@ Second, a `With` method that allows easy creation of mutations (ie `emp2 = emp1.
 **State:**
 ```
 public static class Store {
-   public static VLockedState<VDict<string, Employee>> EmployeesStore =  VLockedState.Create(new VDict<string, Employee>());
+   public static readonly VLockedState<VDict<string, Employee>> Employees =  VLockedState.Create(new VDict<string, Employee>());
 }
 ```
-Store holds the State of the program in this case. `EmployeesStore` is a mutable state that locks itself before allowing mutation so that the _only_ way to change it is threadsafe. It has three methods: `Ref` locks and mutate, `In` locks and allows readonly access, and 'Val' allows threadsafe readonly access of a possibly stale value. <br>
+Store holds the State of the program in this case. It is implemented as a static class with readonly `IState` fields<br>. 
+`VDict` is an immutable dictionary with value semantics and other additions. 
+`EmployeesStore` is a mutable state that locks itself before allowing mutation so that the _only_ way to change it is threadsafe. It has three methods: `Ref` locks and mutate, `In` locks and allows readonly access, and 'Val' allows threadsafe readonly access of a possibly stale value. <br>
 Using `Ref` and `In` hides locking and eliminate multithreading issues when a lock was forgotten. Using 'Val' whereever stale values can be tolerated prevents unecessary locking while preserving thready safety.
 
 
@@ -79,8 +81,8 @@ Using `Ref` and `In` hides locking and eliminate multithreading issues when a lo
 ```
 public static class EmployeeLogic {
   public static bool AddEmployeePhone(string name, string phone) {
-    return Employees.Ref((ref VDict<string, Employee> employeesStore) => {
-     var (ok, employeesStore) = employeesStore.With(name, x => x.Phones, phones => phones+phone);
+    return Store.Employees.Ref((ref VDict<string, Employee> storeEmployees) => {
+     var (ok, storeEmployees) = storeEmployees.With(name, x => x.Phones, phones => phones+phone);
      return ok;
     });
   }
@@ -88,5 +90,7 @@ public static class EmployeeLogic {
   public static IEnumerable<string> GetAllEmployeeNames() => Employees.Val.Keys;
 }  
 ```
-
+Logic is a collection of static (pure) methods.<br>
+`AddEmployeePhone` uses 
+`AddEmployeePhone` uses a `Ref` to acquire a reference access to mutate the employees dictionary
 
