@@ -8,6 +8,8 @@ A desirable 'functional' programming paradign (as opposed to OOP) is one in whic
 - State represents 'memory'. It is made of Data with clearly defined mechanisms to access and mutate it. It does not mutate other States or initiate other Logics. 
 - Logic represents 'operation'. Is is stateless ('pure') functionality that links input (from UI etc), Data and State(s) and is the only entity that can mutates the state(s).
 
+OOP will have objects of type ''Dog'' that know their name and address and can 'WalkHome()', this kind of design has major limitations in the more common kind of software which deals with information and UI. A 'functional' paradigm will have an immutable ''DogRecord'' (Data) having name and address, a ''DogDatabase'' (State) keeping the current dog records plus an archive (ie of address changes), and a 'DogController' (Logic) that can fetch a dog record from the database and change it's location on a map etc.  
+
 C# started as an OOP language where data state and logic are strongly coupled in classes. This makes coding in such a 'functional' paradigm challenging:
 - Immutable data with value semantics is challenging to create as C# Objects are by default mutable (though the addition of read-only properties is a good step) and correctly implementing value semantics is not trivial . Immutable containers were recently added to .NET but they are cumersome to use and have reference semantics. 
 - Encapsulating a state with it's access/mutation API is also difficult though recent language additions can give good solutions.
@@ -25,6 +27,8 @@ An object that once constructed:
    - all public fields and public properties of this and obj return equal values respectively
 - operators == and != return the same result as Equals and !Equals respectively
 - GetHashCode() always return the same value
+
+A ValueImmutable object can have mutable non public fields (usually used for caching) as long as the above conditions still hold.
 
 ## Components
 
