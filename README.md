@@ -28,7 +28,7 @@ FData objects are immutable with value semantics. Some core types (ie strings, T
 
 Allow easy creation of FData types (records) with value semantics
 
-**F containers (FList, FSet, FDict, FQueue, FArray)**
+**F collections (FList, FSet, FDict, FQueue, FArray)**
 
 FData versions of commonn containers with enhanced API
 
@@ -113,6 +113,17 @@ Using `Ref` is the _only_ way to change `Store.Employee` and becasue it is an `F
 - Note the way success is returned in `ok`. Using C# Nullable reference types (`#nullable enable`), gives a compiler warning if you try to access `storeEmployees` without checking that `ok` is true. F uses this pattern for all collections boundary checks and does not throw exceptions in those cases. 
 - `GetEmployeePhones` uses `Val` to get access to the current value of `Store.Employees` and return the phones of a particular employee. No lock is taken in this case so the result may be stale which is fine in this case. However the call is still threadsafe as the returned value (being an FData) is immutable. This kind of threadsafe access to possibly stale values wherever possible adds great effiency.
 
+**Main:**
 
+ ```
+ public static void Main() {
+  var dave = new Employee("Dave", 30, new FSet<string>("123"));
+  var john = dave.With(x => x.Name, "John");
+  EmployeeLogic.AddEmployee(john);
+  EmployeeLogic.AddEmployeePhone(john.Name, "456");
 
- 
+  var storeJohnPhones = EmployeeLogic.GetEmployeePhones(john.Name);
+  Console.WriteLine(string.Join(",", storeJohnPhones.ToArray()));
+}
+```
+
