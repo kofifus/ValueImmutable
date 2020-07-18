@@ -90,8 +90,8 @@ public static class EmployeeLogic {
 
   public static bool AddEmployeePhone(string name, string phone) {
     return Store.Employees.Ref((ref FDict<string, Employee> storeEmployees) => {
-      bool ok;
-      (ok, storeEmployees) = storeEmployees.With(name, x => x.Phones, phones => phones + phone);
+      var (ok, newStoreEmployees) = storeEmployees.With(name, x => x.Phones, phones => phones + phone);
+      if (ok) storeEmployees = newStoreEmployees;
       return ok;
     });
   }
