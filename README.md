@@ -5,10 +5,11 @@ C# support for decoupling Data, state and Logic
 
 A desirable 'functional' programming paradign (as opposed to OOP) is one in which there is clear separation between Data, State and Logic:
 - Data represents 'values'. Data is immutable (cannot change once created) and has value semantics (for equality etc). Data may contain methods to return different representations of itself (ie the decimal or fration part of a real number), however its methods cannot change itself or interact with States or Logic.
-- State represents 'memory'. It is made of Data with clearly defined mechanisms to access and mutatation. It does not mutate other States or use any Logic. Note this is different from state/stateful/stateless (with a lowercase 's') which is commonly used to mean 'has a value' etc)
-- Logic represents 'behaviour'. Is is stateless ('pure') functionality that links input (from UI etc), Data and State(s) and is the only entity that can mutates the state(s).
+- State represents 'memory'. It is made of Data with clearly defined mechanisms to access and mutatation. It does not mutate other States or use any Logic. (Note this is different from state/stateful/stateless with a lowercase 's' which is commonly used to mean 'has a value' etc)
+- Logic represents 'behaviour'. Is is stateless ('pure') functionality that links input (from UI etc), Data and State(s) and is the only entity that can mutate the state(s).
 
-OOP will have objects of type 'Dog' that know their name and address and can 'WalkHome()', while this design maybe useful for some scenarios it has major limitations in the more common kind of software which deals with information and UI ie that archiving/journaling/reasoning about state changes is difficult, and refactoring reusing logic and data is difficult. A 'functional' paradigm will have an immutable ''DogRecord'' (Data) having name and address, a ''DogDatabase'' (State) keeping the current dog records plus an archive (ie of address changes), and a 'DogController' (Logic) that can fetch a dog record from the database and change it's location on a map etc.
+OOP will have objects of type 'Dog' that know their name and address and can 'WalkHome()', while this design maybe useful for some scenarios it has major limitations in the more common kind of software which deals with information and UI. Archiving/journaling/reasoning about state changes is difficult, and refactoring/reusing logic and data is difficult as they are coupled together with the state. A 'functional' paradigm will have an immutable ''DogRecord'' (Data) having name and address, a separate ''DogsArchive'' (State) keeping the current dog records and a backlog (ie of address changes), and a 'DogController' (Logic) that can fetch a dog record from the database and change it's location on a map etc.<br>
+
 A good summary of the bebefit of a such a 'functional' approach can be found here - https://clojure.org/about/state (in Clojure Data is called value, State is called Identity and Logic is called functionality). This is a vast topic but in short separating Data, State and Logic will give you programming superpowers. 
 
 C# started as an OOP language where data state and logic are strongly coupled in classes. This makes coding in such a 'functional' paradigm challenging:
@@ -37,7 +38,7 @@ A ValueImmutable object can fields/properties which are privately mutable, this 
 
 Allow easy creation of immutable data types with value semantics
 
-**F containers (FList, FSet, FDict, FQueue, FArray) **
+**F containers (FList, FSet, FDict, FQueue, FArray)**
 
 Value immutable versions of commonn containers with enhanced API
 
