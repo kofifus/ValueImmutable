@@ -88,25 +88,25 @@ Using `Ref` and `In` hides locking and eliminate multithreading issues where loc
 **Logic:**
 ```
 public static class EmployeeLogic {
-	public static void AddEmployee(Employee employee) {
-		Store.Employees.Ref((ref FDict<string, Employee> storeEmployees) => {
-			storeEmployees += (employee.Name, employee);
-		});
-	}
+  public static void AddEmployee(Employee employee) {
+    Store.Employees.Ref((ref FDict<string, Employee> storeEmployees) => {
+      storeEmployees += (employee.Name, employee);
+    });
+  }
 
-	public static bool AddEmployeePhone(string name, string phone) {
-		return Store.Employees.Ref((ref FDict<string, Employee> storeEmployees) => {
-			bool ok;
-			(ok, storeEmployees) = storeEmployees.With(name, x => x.Phones, phones => phones + phone);
-			return ok;
-		});
-	}
+  public static bool AddEmployeePhone(string name, string phone) {
+    return Store.Employees.Ref((ref FDict<string, Employee> storeEmployees) => {
+      bool ok;
+      (ok, storeEmployees) = storeEmployees.With(name, x => x.Phones, phones => phones + phone);
+      return ok;
+    });
+  }
 
-	public static IEnumerable<string> GetEmployeePhones(string name) {
-		var (ok, employee) = Store.Employees.Val[name];
-		if (!ok) return Enumerable.Empty<string>();
-		return employee.Phones;
-	}
+  public static IEnumerable<string> GetEmployeePhones(string name) {
+    var (ok, employee) = Store.Employees.Val[name];
+    if (!ok) return Enumerable.Empty<string>();
+    return employee.Phones;
+  }
 }
 ```
 Logic is a collection of static (pure) methods.<br>
