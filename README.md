@@ -66,11 +66,11 @@ public class Employee : FRecord<Employee> {
   public Employee(string name, int age, FSet<string> phones) => (this.Name, this.Age, this.Phones) = (name, age, phones);
 }
 ```
-`VSet` is an immutable hashset with value semantics and other additions. So all of `Employee`'s fields are immutable with ValueSemantics. 
+`FSet` is an immutable hashset with value semantics and other additions. So all of `Employee`'s fields are immutable with ValueSemantics.<br> 
 By deriving from `VRecord`, `Employee` get three features:<br> 
 First, value semantics itself, that is an `Equals` and `GetHashCode` that compare all it's fields.<br>
 Second, a `With` method that allows easy creation of mutations (ie `emp2 = emp1.With(x => x.Name, "newname");`)<br>
-Third, `FRecord` static constructor will in DEBUG mode verify that all fields/properties are publically readonly and will throw execptions otherwise
+Third, `FRecord` static constructor will in DEBUG mode verify that all fields/properties are publically readonly and will throw execptions otherwise.<br>
 
 
 **State:**
