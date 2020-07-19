@@ -53,16 +53,16 @@ public class Employee : FRecord<Employee> {
   public string Name { get; }
   public readonly int Age;
   public FSet<string> Phones { get; }
+  
   public Employee(string name, int age, FSet<string> phones) => (this.Name, this.Age, this.Phones) = (name, age, phones);
 }
 ```
 
 Notes:
-- Deriving from `FRecord` makes Employee FData (immutable with value semantics). 
-- `FRecord` will verify (in DEBUG mode) that all of `Employee`'s fields/properties are publically readonly and FData themselves.<br>
-- Deriving `FRecord` gives `Employee` value semantics itself, that is an `Equals` and `GetHashCode` that compare all it's fields.<br>
-- Deriving `FRecord` also gives `Employee` a `With` method that allows easy creation of mutations (ie `emp2 = emp1.With(x => x.Name, "newname");`)<br>
 - `FSet` is an immutable hashset with value semantics and other additions.<br>
+- Deriving from `FRecord` makes `Employee` FData (immutable with value semantics), that is an `Equals` and `GetHashCode` that compare all it's fields. This means that `Employee` can be stored in an `FSet` or be itself a key in an `FDict`.<br>
+- Deriving `FRecord` also gives `Employee` a `With` method that allows easy creation of mutations (ie `emp2 = emp1.With(x => x.Name, "newname");`)<br>
+- `FRecord` will verify (in DEBUG mode) that all of `Employee`'s fields/properties are publically readonly and FData themselves.<br>
 
 
 **State:**
@@ -115,15 +115,21 @@ Using `Ref` is the _only_ way to change `Store.Employee` and becasue it is an `F
 
 **Main:**
 
- ```
- public static void Main() {
+```
+public static void Main() {
   var dave = new Employee("Dave", 30, new FSet<string>("123"));
   var john = dave.With(x => x.Name, "John");
-  EmployeeLogic.AddEmployee(john);
-  EmployeeLogic.AddEmployeePhone(john.Name, "456");
 
+  EmployeeLogic.AddEmployee(john);
+  var (ok, storeJohn) = Store.Employees.Val["John"];
+  if (ok) Console.WriteLine("Store John changed ? " + (storeJohn == john ? "false" : "true")); // false
+
+  EmployeeLogic.AddEmployeePhone(john.Name, "456");
+  var (ok1, storeJohn1) = Store.Employees.Val["John"];
+  if (ok1) Console.WriteLine("Store John changed ? " + (storeJohn == storeJohn1 ? "false" : "true")); // true
+  
   var storeJohnPhones = EmployeeLogic.GetEmployeePhones(john.Name);
-  Console.WriteLine(string.Join(",", storeJohnPhones.ToArray()));
+  Console.WriteLine(string.Join(",", storeJohnPhones.ToArray())); // 123, 456
 }
 ```
 
