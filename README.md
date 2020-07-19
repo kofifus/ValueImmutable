@@ -17,7 +17,7 @@ C# was developed as an OOP language where data state and logic are strongly coup
 - Stateless logic can be expressed by static classes and static functions
 
 The purpose of the F package is to greatly simplify the creation of data (immutable objects with value semantics), and to provide a mechanism for creating, accessing and mutating states.
-
+<br><br>
 ## Components
 
 **FData**
@@ -46,7 +46,7 @@ Allow the easy creation of a new (`FData`) type which encapsulates another (`FDa
 
 Allow the easy creation of a new (`FData`) type which encapsulates another type which is not (`FData`) itself.  
 
-
+<br><br>
 ## Example
 
 **Data:**
