@@ -22,27 +22,29 @@ The purpose of the F package is to greatly simplify the creation of data (immuta
 
 **FData**
 
-FData objects are immutable with value semantics. Some core types (ie strings, Tuples etc) are FData even without directly deriving from the FData base.
+Deriving `FData` declares an object as Data - immutable with value semantics. Some core types (ie strings, Tuples etc) are FData even without directly deriving from the FData base.<br>
+An `FData` type/object my contain non-public mutable members as long as it is publically immutable.
+
 
 **FRecord** 
 
-Allow easy creation of FData types (records).
+Allow easy creation of `FData` types (records).
 
 **F collections (FList, FSet, FDict, FQueue, FArray)**
 
-FData versions of commonn containers with enhanced API.
+`FData` versions of commonn containers with enhanced API.
 
 **FState**
 
-Encapsulate an FData object so that the _only_ way to modify it is through clearly defined access/mutation mechanisms. Two concrete implementations are provided - `FLockedState` which provides thread safety by locking on mutation, and `FJournaledLockedState` which also archive previous versions of the State.
+Encapsulate an `FData` object so that the _only_ way to modify it is through clearly defined access/mutation mechanisms. Two concrete implementations are provided - `FLockedState` which provides thread safety by locking on mutation, and `FJournaledLockedState` which also archive previous versions of the State.
 
 **FWrapper**
 
-Allow the easy creation of a new (FData) type which encapsulates another (FData) type. 
+Allow the easy creation of a new (`FData`) type which encapsulates another (`FData`) type. 
 
 **FComposer**
 
-Allow the easy creation of a new (FData) type which encapsulates another type which is not (FData) itself.  
+Allow the easy creation of a new (`FData`) type which encapsulates another type which is not (`FData`) itself.  
 
 
 ## Example
@@ -60,9 +62,9 @@ public class Employee : FRecord<Employee> {
 
 Notes:
 - `FSet` is an immutable hashset with value semantics and other additions.<br>
-- Deriving from `FRecord` makes `Employee` FData (immutable with value semantics), that is an `Equals` and `GetHashCode` that compare all it's fields. This means that `Employee` can be stored in an `FSet` or be itself a key in an `FDict`.<br>
-- Deriving `FRecord` also gives `Employee` a `With` method that allows easy creation of mutations (ie `emp2 = emp1.With(x => x.Name, "newname");`)<br>
-- `FRecord` will verify (in DEBUG mode) that all of `Employee`'s fields/properties are publically readonly and FData themselves.<br>
+- Deriving from `FRecord` makes `Employee` an `FData` (immutable with value semantics), that is it gets `Equals`/`==`/`!=` and `GetHashCode` that uses all it's members. These are generated using reflection and cached in delegates for efficiency. This means that `Employee` can be ie stored in an `FSet` or be itself a key in an `FDict`.<br>
+- Deriving `FRecord` also gives `Employee` a `With` method that allows easy creation of mutations (ie `emp2 = emp1.With(x => x.Name, "newname");`). `With` expressions are resolved using resolution and cached in delegates for efficiency.<br>
+- `FRecord` will verify (in DEBUG mode) that all of `Employee`'s public fields/properties are publically readonly and `FData` themselves.<br>
 
 
 **State:**
@@ -96,6 +98,8 @@ public static class EmployeeLogic {
     });
   }
 
+  public static (bool, Employee) GetEmployee(string name) => Store.Employees.Val[name];
+
   public static IEnumerable<string> GetEmployeePhones(string name) {
     var (ok, employee) = Store.Employees.Val[name];
     if (!ok) return Enumerable.Empty<string>();
@@ -106,30 +110,46 @@ public static class EmployeeLogic {
 
 Notes:
 - EmployeeLogic is Logic - a collection of static (pure) methods.<br>
-- `AddEmployee` uses `Ref` to acquire a reference access to mutate the employees dictionary and add/set an employee.
+- `AddEmployee` uses `Ref` to acquire a reference access to mutate the employees dictionary State and add/set an employee.
 Using `Ref` is the _only_ way to change `Store.Employee` and becasue it is an `FLockedState` this operation is threadsafe (a lock is acquired internally).
-- Note the use of `+=` to add a (key, value) to the dictionary. F collections prefer operator overloading for adding/removing  (in the same way that basic `string` does) as they are more suiltable for immutable types.
+- Note the use of `+=` to add a (key, value) to the dictionary. `F` collections prefer operator overloading for adding/removing  (in the same way that basic `string` does) as they are more suiltable for immutable types.
 - `AddEmployeePhone` similary uses a `Ref` to mutate `Store.Employees` in a threadsafe way. It uses `With` to calculate and return a mutation of storeEmployees with a mutated Phones property, and assign it to back to the State.
-- Note the way success is returned in `ok`. Using C# Nullable reference types (`#nullable enable`), gives a compiler warning if you try to access `storeEmployees` without checking that `ok` is true. F uses this pattern for all collections boundary checks and does not throw exceptions in those cases. 
-- `GetEmployeePhones` uses `Val` to get access to the current value of `Store.Employees` and return the phones of a particular employee. No lock is taken in this case so the result may be stale which is fine in this case. However the call is still threadsafe as the returned value (being an FData) is immutable. This kind of threadsafe access to possibly stale values wherever possible adds great effiency.
+- Note the way success is returned in `ok`. Using C# Nullable reference types (`#nullable enable`), gives a compiler warning if you try to access `storeEmployees` without checking that `ok` is true. `F` uses this pattern for all collections boundary checks and does not throw exceptions in those cases. 
+- `GetEmployee` and `GetEmployeePhones` uses `Val` to get access to the current value of `Store.Employees`. No lock is taken in this case so the result may be stale which is fine in this case. However the call is still threadsafe as the returned value (being an `FData`) is immutable. This kind of threadsafe access to possibly stale values wherever possible adds great effiency.
 
 **Main:**
 
 ```
 public static void Main() {
   var dave = new Employee("Dave", 30, new FSet<string>("123"));
+
   var john = dave.With(x => x.Name, "John");
+  Console.WriteLine("dave RefrenceEquals john ? " + (Object.ReferenceEquals(dave, john) ? "true" : "false")); // false
+  Console.WriteLine("dave==john ? " + (dave==john ? "true" : "false")); // false
 
+  var john1 = dave.With(x => x.Name, "John");
+  Console.WriteLine("john RefrenceEquals john1 ? " + (Object.ReferenceEquals(john, john1) ? "true" : "false")); // false
+  Console.WriteLine("john==john1 ? " + (john == john1 ? "true" : "false")); // true
+  
   EmployeeLogic.AddEmployee(john);
-  var (ok, storeJohn) = Store.Employees.Val["John"];
-  if (ok) Console.WriteLine("Store John changed ? " + (storeJohn == john ? "false" : "true")); // false
-
+  var (ok, storeJohn) = EmployeeLogic.GetEmployee("John");
+  if (ok) {
+    Console.WriteLine("john RefrenceEquals storeJohn ? " + (Object.ReferenceEquals(john, storeJohn) ? "true" : "false")); // true
+    Console.WriteLine("john==storeJohn ? " + (john == storeJohn ? "true" : "false")); // true
+  }
+  
   EmployeeLogic.AddEmployeePhone(john.Name, "456");
-  var (ok1, storeJohn1) = Store.Employees.Val["John"];
-  if (ok1) Console.WriteLine("Store John changed ? " + (storeJohn == storeJohn1 ? "false" : "true")); // true
+  var (ok1, storeJohn1) = EmployeeLogic.GetEmployee("John");
+  if (ok1) {
+    Console.WriteLine("storeJohn RefrenceEquals storeJohn1 ? " + (Object.ReferenceEquals(storeJohn, storeJohn1) ? "true" : "false")); // false
+    Console.WriteLine("storeJohn==storeJohn1 ? " + (storeJohn == storeJohn1 ? "true" : "false")); // false
+  }
   
   var storeJohnPhones = EmployeeLogic.GetEmployeePhones(john.Name);
-  Console.WriteLine(string.Join(",", storeJohnPhones.ToArray())); // 123, 456
+  Console.WriteLine(string.Join(",", storeJohnPhones)); // 123, 456
 }
 ```
+Notes:
+- Main is also Logic
+- Main is threadsafe as all objects are immutable. Locking is only used where a State is mutated.
 
