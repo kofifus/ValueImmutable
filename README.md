@@ -1,6 +1,6 @@
 # F
 C# support for decoupling Data, state and Logic
-
+<br><br>
 ## Motivation
 
 A desirable 'functional' programming paradign (as opposed to OOP) is one in which there is clear separation between Data, State and Logic:
