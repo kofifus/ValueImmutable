@@ -45,7 +45,7 @@ Allow the easy creation of a new (FData) type which encapsulates another (FData)
 Allow the easy creation of a new (FData) type which encapsulates another type which is not (FData) itself.  
 
 
-## A Simple Example
+## Example
 
 **Data:**
 ```
