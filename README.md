@@ -91,7 +91,7 @@ public static class EmployeeLogic {
   public static bool AddEmployeePhone(string name, string phone) {
     return Store.Employees.Ref((ref FDict<string, Employee> storeEmployees) => {
       var (ok, newStoreEmployees) = storeEmployees.With(name, x => x.Phones, phones => phones + phone);
-      if (ok) storeEmployees = newStoreEmployees;
+      if (ok) storeEmployees = newStoreEmployees; // change the State
       return ok;
     });
   }
