@@ -64,7 +64,7 @@ Notes:
 - Deriving from `FRecord` makes `Employee` an `FData` (immutable with value semantics), that is it gets `Equals`/`==`/`!=` and `GetHashCode` that uses all it's members. These are generated using reflection and cached in delegates for efficiency. This means that `Employee` can be ie stored in an `FSet` or be itself a key in an `FDict`.<br>
 - Deriving `FRecord` also gives `Employee` a `With` method that allows easy creation of mutations (ie `emp2 = emp1.With(x => x.Name, "newname");`). `With` expressions are resolved using resolution and cached in delegates for efficiency.<br>
 - `FRecord` will verify (in DEBUG mode) that all of `Employee`'s public fields/properties are publically readonly and `FData` themselves.<br>
-
+<br>
 
 **State:**
 ```
@@ -78,7 +78,7 @@ Notes:
 - `FLockedState` is a mutable State that locks itself before allowing mutation so that the _only_ way to change it is threadsafe. It has three methods: `Ref` locks and mutate, `In` locks and allows readonly access, and `Val` allows threadsafe readonly access of a possibly stale value.
 Using `Ref` and `In` hides locking and eliminate multithreading issues where locking was forgotten. Using 'Val' whereever stale values can be tolerated prevents unecessary locking while preserving thready safety.
 - `VDict` is an immutable dictionary with value semantics and other additions. 
-
+<br>
 
 **Logic:**
 ```
@@ -115,6 +115,7 @@ Using `Ref` is the _only_ way to change `Store.Employee` and becasue it is an `F
 - `AddEmployeePhone` similary uses a `Ref` to mutate `Store.Employees` in a threadsafe way. It uses `With` to calculate and return a mutation of storeEmployees with a mutated Phones property, and assign it to back to the State.
 - Note the way success is returned in `ok`. Using C# Nullable reference types (`#nullable enable`), gives a compiler warning if you try to access `storeEmployees` without checking that `ok` is true. `F` uses this pattern for all collections boundary checks and does not throw exceptions in those cases. 
 - `GetEmployee` and `GetEmployeePhones` uses `Val` to get access to the current value of `Store.Employees`. No lock is taken in this case so the result may be stale which is fine in this case. However the call is still threadsafe as the returned value (being an `FData`) is immutable. This kind of threadsafe access to possibly stale values wherever possible adds great effiency.
+<br>
 
 **Main:**
 
