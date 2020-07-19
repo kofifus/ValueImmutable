@@ -28,7 +28,7 @@ An `FData` type/object my contain non-public mutable members as long as it is pu
 
 **FRecord** 
 
-Allow easy creation of `FData` types (records).
+Allow easy creation and mutation of `FData` types (records).
 
 **F collections (FList, FSet, FDict, FQueue, FArray)**
 
