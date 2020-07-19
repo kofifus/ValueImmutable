@@ -26,11 +26,11 @@ FData objects are immutable with value semantics. Some core types (ie strings, T
 
 **FRecord** 
 
-Allow easy creation of FData types (records) with value semantics
+Allow easy creation of FData types (records).
 
 **F collections (FList, FSet, FDict, FQueue, FArray)**
 
-FData versions of commonn containers with enhanced API
+FData versions of commonn containers with enhanced API.
 
 **FState**
 
