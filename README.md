@@ -75,8 +75,8 @@ public static class Store {
 ```
 
 Notes:
-- Store holds the State of the program in this case. It is implemented as a static class with readonly `FState` fields<br>. 
-- `FLockedState` is a mutable State that locks itself before allowing mutation so that the _only_ way to change it is threadsafe. It has three methods: `Ref` locks and mutate, `In` locks and allows readonly access, and `Val` allows threadsafe readonly access of a possibly stale value. <br>
+- Store holds the State of the program in this case. It is implemented as a static class with readonly `FState` fields.
+- `FLockedState` is a mutable State that locks itself before allowing mutation so that the _only_ way to change it is threadsafe. It has three methods: `Ref` locks and mutate, `In` locks and allows readonly access, and `Val` allows threadsafe readonly access of a possibly stale value.
 Using `Ref` and `In` hides locking and eliminate multithreading issues where locking was forgotten. Using 'Val' whereever stale values can be tolerated prevents unecessary locking while preserving thready safety.
 - `VDict` is an immutable dictionary with value semantics and other additions. 
 
