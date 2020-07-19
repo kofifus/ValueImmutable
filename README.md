@@ -45,7 +45,6 @@ Allow the easy creation of a new (`FData`) type which encapsulates another (`FDa
 **FComposer**
 
 Allow the easy creation of a new (`FData`) type which encapsulates another type which is not (`FData`) itself.  
-
 <br><br>
 ## Example
 
